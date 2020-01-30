@@ -345,6 +345,16 @@ class Telegram:
         for handler in self._update_handlers[update_type]:
             self._workers_queue.put((handler, update), timeout=self._queue_put_timeout)
 
+    def remove_update_handler(self, handler_type: str, func: Callable) -> None:
+        if handler_type not in self._update_handlers:
+            return
+
+        try:
+            self._update_handlers[handler_type].remove(func)
+        except ValueError:
+            # not in the list
+            pass
+
     def add_message_handler(self, func: Callable) -> None:
         self.add_update_handler(MESSAGE_HANDLER_TYPE, func)
 
